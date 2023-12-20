@@ -11,7 +11,7 @@ export const getNotes: RequestHandler = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}
+};
 
 export const getNote: RequestHandler = async (req, res, next) => {
   const noteId = req.params.noteId;
@@ -30,7 +30,7 @@ export const getNote: RequestHandler = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}
+};
 
 /* The interface defines the type of the request body */
 interface CreateNoteBody {
@@ -55,4 +55,42 @@ export const createNote: RequestHandler<unknown, unknown, CreateNoteBody, unknow
   } catch (error) {
     next(error);
   }
+};
+
+interface UpdateNoteParams {
+  noteId: string;
 }
+
+interface UpdateNoteBody {
+  text?: string;
+  title?: string;
+}
+
+export const updateNote: RequestHandler<UpdateNoteParams, unknown, UpdateNoteBody, unknown> = async (req, res, next) => {
+  const noteId = req.params.noteId;
+  const newText = req.body.text;
+  const newTitle = req.body.title;
+  try {
+    // Check if note ID is valid
+    if (!mongoose.isValidObjectId(noteId)) {
+      throw createHttpError(400, 'Invalid note ID');
+    }
+    if (!newTitle) {
+      throw createHttpError(400, 'Title is missing from note');
+    }
+    const note = await noteSchema.findById(noteId).exec();
+    // If note not found, throw error
+    if (!note) {
+      throw createHttpError(404, 'Note not found');
+    }
+    // If note found, update it
+    note.text = newText;
+    note.title = newTitle;
+    const updatedNote = await note.save();
+    // If note updated successfully, return it
+    res.status(200).json(updatedNote);
+
+  } catch (error) {
+    next(error);
+  }
+};
