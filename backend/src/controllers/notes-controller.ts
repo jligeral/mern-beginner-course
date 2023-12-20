@@ -94,3 +94,24 @@ export const updateNote: RequestHandler<UpdateNoteParams, unknown, UpdateNoteBod
     next(error);
   }
 };
+
+export const deleteNote: RequestHandler = async (req, res, next) => {
+  const noteId = req.params.noteId;
+  try {
+    // Check if note ID is valid
+    if (!mongoose.isValidObjectId(noteId)) {
+      throw createHttpError(400, 'Invalid note ID');
+    }
+    const note = await noteSchema.findById(noteId).exec();
+    // If note not found, throw error
+    if (!note) {
+      throw createHttpError(404, 'Note not found');
+    }
+    // If note found, delete it
+    await note.deleteOne();
+    res.sendStatus(204);
+
+  } catch (error) {
+    next(error);
+  }
+};
