@@ -17,7 +17,7 @@ export async function fetchNotes(): Promise<Note[]> {
 }
 
 /* Defines types for the input to the createNote function */
-interface NoteInput {
+export interface NoteInput {
   title: string,
   text?: string,
 }

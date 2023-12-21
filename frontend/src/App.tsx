@@ -1,13 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import { Note as NoteSchema } from './models/note';
 import Note from "./components/Note";
-import {Col, Container, Row} from "react-bootstrap";
-import styles from "./styles/NotesPage.module.css";
+import {Button, Col, Container, Row} from 'react-bootstrap';
+import styles from './styles/NotesPage.module.css';
+import styleUtils from './styles/utils.module.css';
 import * as NotesApi from './network/notes_api';
+import CreateNote from './components/CreateNote';
 
 function App() {
   /* Initialize the notes state with an empty array */
   const [notes, setNotes] = useState<NoteSchema[]>([]);
+
+  const [showCreateNote, setShowCreateNote] = useState(false);
 
   useEffect(() => {
     async function getNotes() {
@@ -25,6 +29,11 @@ function App() {
 
   return (
     <Container>
+      <Button
+        className={`mb-3 ${styleUtils.blockCenter}`}
+        onClick={() => setShowCreateNote(true)}>
+        Create New Note
+      </Button>
       <Row xs={1} md={2} xl={3} className="g-4">
         {notes.map((note) => (
           <Col key={note._id}>
@@ -32,6 +41,16 @@ function App() {
           </Col>
         ))}
       </Row>
+      {
+        showCreateNote &&
+        <CreateNote
+          onDismiss={() => setShowCreateNote(false)}
+          onNoteSaved={(newNote) => {
+            setNotes([...notes, newNote]);
+            setShowCreateNote(false);
+          }}
+        />
+      }
     </Container>
   );
 }
