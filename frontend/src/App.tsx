@@ -3,6 +3,7 @@ import { Note as NoteSchema } from './models/note';
 import Note from "./components/Note";
 import {Col, Container, Row} from "react-bootstrap";
 import styles from "./styles/NotesPage.module.css";
+import * as NotesApi from './network/notes_api';
 
 function App() {
   /* Initialize the notes state with an empty array */
@@ -11,8 +12,7 @@ function App() {
   useEffect(() => {
     async function getNotes() {
       try {
-        const response = await fetch('/api/notes', { method: 'GET' });
-        const notes = await response.json();
+        const notes = await NotesApi.fetchNotes();
         setNotes(notes);
 
       } catch (error) {
@@ -28,7 +28,7 @@ function App() {
       <Row xs={1} md={2} xl={3} className="g-4">
         {notes.map((note) => (
           <Col key={note._id}>
-            <Note note={note} />
+            <Note note={note} className={styles.note} />
           </Col>
         ))}
       </Row>
