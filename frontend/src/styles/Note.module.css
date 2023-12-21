@@ -3,7 +3,12 @@
 
 }
 
-.cartText {
-  white-space: pre-line;
+.cardBody {
+  overflow: hidden; /* Hide text outside the box */
+  mask-image: linear-gradient(180deg, #000 60%, transparent); /* "Fade" the text into the box with a gradient */
+}
+
+.cardText {
+  white-space: pre-line; /* Keep line breaks */
 
 }

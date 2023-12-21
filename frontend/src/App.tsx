@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import { Note as NoteSchema } from './models/note';
 import Note from "./components/Note";
+import {Col, Container, Row} from "react-bootstrap";
+import styles from "./styles/NotesPage.module.css";
 
 function App() {
   /* Initialize the notes state with an empty array */
@@ -22,11 +24,15 @@ function App() {
   }, []); // <-- empty dependency array to ensure effect is only run once
 
   return (
-    <div className="App">
-      {notes.map((note) => (
-        <Note note={note} key={note._id} />
-      ))}
-    </div>
+    <Container>
+      <Row xs={1} md={2} xl={3} className="g-4">
+        {notes.map((note) => (
+          <Col key={note._id}>
+            <Note note={note} />
+          </Col>
+        ))}
+      </Row>
+    </Container>
   );
 }
 
