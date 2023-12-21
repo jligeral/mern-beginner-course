@@ -5,8 +5,8 @@ import { NoteInput } from "../network/notes_api";
 import * as NotesApi from "../network/notes_api";
 
 interface CreateNoteProps {
-  onDismiss: () => void,
-  onNoteSaved: (note: Note) => void,
+  onDismiss: () => void, // <-- function to call when the modal is dismissed
+  onNoteSaved: (note: Note) => void, // <-- function to call when a new note is saved
 }
 const CreateNote = ({ onDismiss, onNoteSaved }: CreateNoteProps) => {
 
@@ -38,7 +38,7 @@ const CreateNote = ({ onDismiss, onNoteSaved }: CreateNoteProps) => {
               type="text"
               placeholder="Enter title"
               isInvalid={!!errors.title}
-              {...register("title", { required: "Required" })}
+              {...register("title", { required: "Required" })} // <-- ensures that the title is not empty
             />
             <Form.Control.Feedback type="invalid">
               {errors.title?.message}
@@ -60,7 +60,7 @@ const CreateNote = ({ onDismiss, onNoteSaved }: CreateNoteProps) => {
         <Button
           type="submit"
           form="createNoteForm"
-          disabled={isSubmitting}
+          disabled={isSubmitting} // <-- disables the button until the form is submitted
         >
           Submit
         </Button>

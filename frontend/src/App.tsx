@@ -36,7 +36,7 @@ function App() {
       </Button>
       <Row xs={1} md={2} xl={3} className="g-4">
         {notes.map((note) => (
-          <Col key={note._id}>
+          <Col key={note._id}> {/* The key is a unique identifier to each note */}
             <Note note={note} className={styles.note} />
           </Col>
         ))}
@@ -46,8 +46,8 @@ function App() {
         <CreateNote
           onDismiss={() => setShowCreateNote(false)}
           onNoteSaved={(newNote) => {
-            setNotes([...notes, newNote]);
-            setShowCreateNote(false);
+            setNotes([...notes, newNote]); // <-- add the new note to the notes state
+            setShowCreateNote(false); // <-- close the modal
           }}
         />
       }
