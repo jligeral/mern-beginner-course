@@ -1,15 +1,18 @@
 import styles from "../styles/Note.module.css";
+import styleUtils from "../styles/utils.module.css";
 import { Note as NoteSchema } from "../models/note";
 import { Card } from "react-bootstrap";
 import { formatDate } from "../util/formatDate";
+import {MdDelete} from "react-icons/md";
 
 interface NoteProps {
   note: NoteSchema,
+  onDeleteNoteClicked: (note: NoteSchema) => void,
   /* className prop allows us to add additional classes to the component */
   className?: string,
 }
 
-const Note = ({ note, className }: NoteProps) => {
+const Note = ({ note, className, onDeleteNoteClicked }: NoteProps) => {
   /* Destructure the note object */
   const {
     title,
@@ -29,8 +32,15 @@ const Note = ({ note, className }: NoteProps) => {
   return (
     <Card className={`${styles.noteCard} ${className}`}>
       <Card.Body className={styles.cardBody}>
-        <Card.Title>
+        <Card.Title className={styleUtils.flexCenter}>
           {title}
+          <MdDelete
+          className="text-muted ms-auto"
+          onClick={(e) => {
+            onDeleteNoteClicked(note);
+            e.stopPropagation();
+          }}
+          />
         </Card.Title>
         <Card.Text className={styles.cardText}>
           {text}

@@ -6,6 +6,7 @@ import styles from './styles/NotesPage.module.css';
 import styleUtils from './styles/utils.module.css';
 import * as NotesApi from './network/notes_api';
 import CreateNote from './components/CreateNote';
+import {FaPlus} from "react-icons/fa";
 
 function App() {
   /* Initialize the notes state with an empty array */
@@ -27,17 +28,32 @@ function App() {
     getNotes();
   }, []); // <-- empty dependency array to ensure effect is only run once
 
+  async function deleteNote (note: NoteSchema) {
+    try {
+      await NotesApi.deleteNote(note._id);
+      setNotes(notes.filter(existingNote => existingNote._id !== note._id));
+    } catch (error) {
+      console.error(error);
+      alert(error);
+    }
+  }
+
   return (
     <Container>
       <Button
-        className={`mb-3 ${styleUtils.blockCenter}`}
+        className={`mb-3 ${styleUtils.blockCenter} ${styleUtils.flexCenter}`}
         onClick={() => setShowCreateNote(true)}>
+        <FaPlus />
         Create New Note
       </Button>
       <Row xs={1} md={2} xl={3} className="g-4">
         {notes.map((note) => (
           <Col key={note._id}> {/* The key is a unique identifier to each note */}
-            <Note note={note} className={styles.note} />
+            <Note
+              note={note}
+              className={styles.note}
+              onDeleteNoteClicked={deleteNote}
+            />
           </Col>
         ))}
       </Row>
