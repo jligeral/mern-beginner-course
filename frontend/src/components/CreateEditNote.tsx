@@ -4,17 +4,30 @@ import { useForm } from "react-hook-form";
 import { NoteInput } from "../network/notes_api";
 import * as NotesApi from "../network/notes_api";
 
-interface CreateNoteProps {
+interface CreateEditNoteProps {
   onDismiss: () => void, // <-- function to call when the modal is dismissed
   onNoteSaved: (note: Note) => void, // <-- function to call when a new note is saved
+  noteToEdit?: Note, // <-- optional note to edit
 }
-const CreateNote = ({ onDismiss, onNoteSaved }: CreateNoteProps) => {
+const CreateEditNote = ({ onDismiss, onNoteSaved, noteToEdit }: CreateEditNoteProps) => {
 
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<NoteInput>();
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<NoteInput>({
+    /* Set default values for the form inputs */
+    defaultValues: {
+      text: noteToEdit?.text || "",
+      title: noteToEdit?.title || "",
+    }
+  });
 
   async function onSubmit(input: NoteInput) {
     try {
-      const noteResponse = await NotesApi.createNote(input);
+      let noteResponse: Note;
+      if (noteToEdit) {
+        noteResponse = await NotesApi.updateNote(noteToEdit._id, input);
+      }
+      else {
+        noteResponse = await NotesApi.createNote(input);
+      }
       onNoteSaved(noteResponse);
     } catch (error) {
       console.error(error);
@@ -26,12 +39,12 @@ const CreateNote = ({ onDismiss, onNoteSaved }: CreateNoteProps) => {
     <Modal show onHide={onDismiss}>
       <Modal.Header closeButton>
         <Modal.Title>
-          Create New Note
+          {noteToEdit ? "Edit Note" : "Create New Note"}
         </Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
-        <Form id="createNoteForm" onSubmit={handleSubmit(onSubmit)}>
+        <Form id="createEditNoteForm" onSubmit={handleSubmit(onSubmit)}>
           <Form.Group className="mb-3">
             <Form.Label>Title</Form.Label>
             <Form.Control
@@ -51,6 +64,7 @@ const CreateNote = ({ onDismiss, onNoteSaved }: CreateNoteProps) => {
               as="textarea"
               placeholder="Enter text here"
               rows={5}
+              {...register("text")}
             />
           </Form.Group>
         </Form>
@@ -59,7 +73,7 @@ const CreateNote = ({ onDismiss, onNoteSaved }: CreateNoteProps) => {
       <Modal.Footer>
         <Button
           type="submit"
-          form="createNoteForm"
+          form="createEditNoteForm"
           disabled={isSubmitting} // <-- disables the button until the form is submitted
         >
           Submit
@@ -69,4 +83,4 @@ const CreateNote = ({ onDismiss, onNoteSaved }: CreateNoteProps) => {
   );
 }
 
-export default CreateNote;
+export default CreateEditNote;

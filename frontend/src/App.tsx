@@ -5,7 +5,7 @@ import {Button, Col, Container, Row} from 'react-bootstrap';
 import styles from './styles/NotesPage.module.css';
 import styleUtils from './styles/utils.module.css';
 import * as NotesApi from './network/notes_api';
-import CreateNote from './components/CreateNote';
+import CreateEditNote from './components/CreateEditNote';
 import {FaPlus} from "react-icons/fa";
 
 function App() {
@@ -13,6 +13,7 @@ function App() {
   const [notes, setNotes] = useState<NoteSchema[]>([]);
 
   const [showCreateNote, setShowCreateNote] = useState(false);
+  const [noteToEdit, setNoteToEdit] = useState<NoteSchema | null>(null);
 
   useEffect(() => {
     async function getNotes() {
@@ -53,17 +54,29 @@ function App() {
               note={note}
               className={styles.note}
               onDeleteNoteClicked={deleteNote}
+              onNoteClicked={setNoteToEdit}
             />
           </Col>
         ))}
       </Row>
       {
         showCreateNote &&
-        <CreateNote
+        <CreateEditNote
           onDismiss={() => setShowCreateNote(false)}
           onNoteSaved={(newNote) => {
             setNotes([...notes, newNote]); // <-- add the new note to the notes state
             setShowCreateNote(false); // <-- close the modal
+          }}
+        />
+      }
+      {
+        noteToEdit &&
+        <CreateEditNote
+          noteToEdit={noteToEdit}
+          onDismiss={() => setNoteToEdit(null)}
+          onNoteSaved={(updatedNote) => {
+            setNotes(notes.map(existingNote => existingNote._id === updatedNote._id ? updatedNote : existingNote));
+            setNoteToEdit(null);
           }}
         />
       }
