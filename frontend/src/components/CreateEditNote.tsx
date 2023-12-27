@@ -3,6 +3,7 @@ import { Note } from "../models/note";
 import { useForm } from "react-hook-form";
 import { NoteInput } from "../network/notes_api";
 import * as NotesApi from "../network/notes_api";
+import TextInputField from "./form/TextInputField";
 
 interface CreateEditNoteProps {
   onDismiss: () => void, // <-- function to call when the modal is dismissed
@@ -45,28 +46,25 @@ const CreateEditNote = ({ onDismiss, onNoteSaved, noteToEdit }: CreateEditNotePr
 
       <Modal.Body>
         <Form id="createEditNoteForm" onSubmit={handleSubmit(onSubmit)}>
-          <Form.Group className="mb-3">
-            <Form.Label>Title</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter title"
-              isInvalid={!!errors.title}
-              {...register("title", { required: "Required" })} // <-- ensures that the title is not empty
-            />
-            <Form.Control.Feedback type="invalid">
-              {errors.title?.message}
-            </Form.Control.Feedback>
-          </Form.Group>
+          <TextInputField
+            name="title"
+            label="Title"
+            type="text"
+            placeholder="Enter title"
+            register={register}
+            registerOptions={{ required: "Required" }} // <-- ensures that the title is not empty
+            error={errors.title}
+          />
 
-          <Form.Group className="mb-3">
-            <Form.Label>Text</Form.Label>
-            <Form.Control
-              as="textarea"
-              placeholder="Enter text here"
-              rows={5}
-              {...register("text")}
-            />
-          </Form.Group>
+          <TextInputField
+            name="text"
+            label="Text"
+            as="textarea"
+            placeholder="Enter text here"
+            rows={5}
+            register={register}
+          />
+
         </Form>
       </Modal.Body>
 
