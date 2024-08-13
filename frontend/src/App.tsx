@@ -6,7 +6,9 @@ import styles from './styles/NotesPage.module.css';
 import styleUtils from './styles/utils.module.css';
 import * as NotesApi from './network/notes_api';
 import CreateEditNote from './components/CreateEditNote';
+import SignUpModal from './components/SignUpModal';
 import {FaPlus} from "react-icons/fa";
+import LoginModal from "./components/LoginModal";
 
 function App() {
   /* Initialize the notes state with an empty array */
@@ -96,6 +98,20 @@ function App() {
             setNotes(notes.map(existingNote => existingNote._id === updatedNote._id ? updatedNote : existingNote));
             setNoteToEdit(null);
           }}
+        />
+      }
+      {
+        false &&
+        <SignUpModal
+        onDismiss={() => {}}
+        onSignUpSuccess={() => {}}
+        />
+      }
+      {
+        false &&
+        <LoginModal
+          onDismiss={() => {}}
+          onLoginSuccess={() => {}}
         />
       }
     </Container>
