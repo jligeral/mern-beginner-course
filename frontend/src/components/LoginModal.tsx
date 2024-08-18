@@ -2,9 +2,11 @@ import { useForm } from "react-hook-form";
 import { User } from "../models/user";
 import { LoginCredentials } from "../network/notes_api";
 import * as NotesApi from "../network/notes_api";
-import { Modal, Form, Button } from "react-bootstrap";
+import {Modal, Form, Button, Alert} from "react-bootstrap";
 import TextInputField from "./form/TextInputField";
 import styleUtils from "../styles/utils.module.css";
+import { useState } from "react";
+import { UnauthorizedError } from "../errors/http_errors";
 
 interface LoginModalProps {
   onDismiss: () => void, // <-- function to call when the modal is dismissed
@@ -12,6 +14,8 @@ interface LoginModalProps {
 }
 
 const LoginModal = ({ onDismiss, onLoginSuccess } : LoginModalProps) => {
+  const [ errorText, setErrorText ] = useState<string | null>(null);
+
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginCredentials>();
 
   async function onSubmit(credentials: LoginCredentials) {
@@ -19,8 +23,13 @@ const LoginModal = ({ onDismiss, onLoginSuccess } : LoginModalProps) => {
       const user = await NotesApi.login(credentials);
       onLoginSuccess(user);
     } catch (error) {
-      console.error(error);
-      alert(error);
+        if (error instanceof UnauthorizedError) {
+          setErrorText(error.message);
+        }
+        else {
+          alert(error);
+        }
+        console.error(error);
     }
   }
 
@@ -33,6 +42,11 @@ const LoginModal = ({ onDismiss, onLoginSuccess } : LoginModalProps) => {
       </Modal.Header>
 
       <Modal.Body>
+        {errorText &&
+          <Alert variant="danger">
+            {errorText}
+          </Alert>
+        }
         <Form id="loginForm" onSubmit={handleSubmit(onSubmit)}>
           <TextInputField
             name="username"
