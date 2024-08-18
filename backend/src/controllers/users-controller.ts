@@ -6,18 +6,8 @@ import bcrypt from 'bcrypt';
 
 /* This function is used to obtain the authenticated user */
 export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
-  const authenticatedUserId = req.session.userId;
-
   try {
-    if (!authenticatedUserId) {
-      throw createHttpError(401, 'User not authenticated');
-    }
-
-    const authenticatedUser = await UserSchema.findById(authenticatedUserId).select('+email').exec();
-    if (!authenticatedUser) {
-      throw createHttpError(401, 'Not authenticated');
-    }
-
+    const authenticatedUser = await UserSchema.findById(req.session.userId).select('+email').exec();
     res.status(200).json(authenticatedUser);
   } catch (error) {
     next(error);

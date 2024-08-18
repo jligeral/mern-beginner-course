@@ -7,6 +7,7 @@ import createHttpError, { isHttpError } from 'http-errors';
 import session from "express-session";
 import env from "./util/validateEnv";
 import mongostore from "connect-mongo";
+import {requiresAuth} from "./middleware/auth";
 
 /* app is the name of the server */
 const app = express();
@@ -28,7 +29,7 @@ app.use(session({
   }),
 }));
 /* Defines endpoint to obtain notes */
-app.use('/api/notes', notesRouter);
+app.use('/api/notes', requiresAuth, notesRouter);
 /* Defines endpoint to obtain users */
 app.use('/api/users', usersRoutes);
 
